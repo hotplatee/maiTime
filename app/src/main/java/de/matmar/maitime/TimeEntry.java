@@ -5,8 +5,10 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "timeentry_table")
-public class TimeEntry {
+public class TimeEntry implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -36,6 +38,13 @@ public class TimeEntry {
         this.stunden = stunden;
         this.minuten = minuten;
         this.beschreibung = beschreibung;
+    }
+
+    public TimeEntry(TimeEntry entry) {
+        this.datum = entry.getDatum();
+        this.stunden = entry.getStunden();
+        this.minuten = entry.getMinuten();
+        this.beschreibung = entry.getBeschreibung();
     }
 
     public String getDatum() {

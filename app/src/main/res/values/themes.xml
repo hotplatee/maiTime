@@ -39,4 +39,14 @@
     <color name="white">#FFFFFF</color>
     <color name="teal_200">#009688</color>
     <color name="black">#000000</color>
+
+    <style name="button_style" parent="android:style/Widget.Material.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
 </resources>
