@@ -1,5 +1,6 @@
 package de.matmar.maitime;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,12 +19,22 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.List;
+
+import static de.matmar.maitime.NewTimeEntryActivity.EXTRA_REPLY;
 
 public class MainActivity extends AppCompatActivity {
 
     private TimeEntryViewModel timeEntryViewModel;
+    public static final int NEW_TIMEENTRY_ACTIVITY_REQUEST_CODE = 1;
+
+    public static final int UPDATE_TIMEENTRY_ACTIVITY_REQUEST_CODE = 2;
+
+    public static final String EXTRA_DATA_UPDATE_TIMEENTRY = "extra_timeentry_to_be_updated";
+    public static final String EXTRA_DATA_ID = "extra_data_id";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, NewTimeEntryActivity.class);
+                startActivityForResult(intent, NEW_TIMEENTRY_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -54,6 +66,73 @@ public class MainActivity extends AppCompatActivity {
                 adapter.setTimeEntry(timeEntries);
             }
         });
+
+        // Add the functionality to swipe items in the
+        // recycler view to delete that item
+        ItemTouchHelper helper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
+                                         int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        TimeEntry myTimeEntry = adapter.getTimeEntryAtPosition(position);
+                        Toast.makeText(MainActivity.this, "Deleting " +
+                                myTimeEntry.getTimeEntry(), Toast.LENGTH_LONG).show();
+
+                        // Delete the word
+                        timeEntryViewModel.deleteTimeEntry(myTimeEntry);
+                    }
+                });
+
+        helper.attachToRecyclerView(recyclerView);
+
+        adapter.setOnItemClickListener((v, position) -> {
+            TimeEntry timeEntry = adapter.getTimeEntryAtPosition(position);
+            launchUpdateTimeEntrydActivity(timeEntry);
+        });
+
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_TIMEENTRY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            TimeEntry timeEntry = new TimeEntry((TimeEntry) data.getSerializableExtra(EXTRA_REPLY));
+            timeEntryViewModel.insert(timeEntry);
+        } else if (requestCode == UPDATE_TIMEENTRY_ACTIVITY_REQUEST_CODE
+                && resultCode == RESULT_OK) {
+            TimeEntry timeEntry_data = data.getParcelableExtra(NewTimeEntryActivity.EXTRA_REPLY);
+            int id = data.getIntExtra(NewTimeEntryActivity.EXTRA_REPLY_ID, -1);
+
+            if (id != -1) {
+                timeEntryViewModel.update(new TimeEntry(id, timeEntry_data.getDatum(), timeEntry_data.getStunden(),
+                        timeEntry_data.getMinuten(),timeEntry_data.getBeschreibung()));
+            } else {
+                Toast.makeText(this, R.string.unable_to_update,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            Toast.makeText(
+                    getApplicationContext(),
+                    R.string.empty_not_saved,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void launchUpdateTimeEntrydActivity(TimeEntry timeEntry) {
+        Intent intent = new Intent(this, NewTimeEntryActivity.class);
+        intent.putExtra(EXTRA_DATA_UPDATE_TIMEENTRY, timeEntry.getTimeEntry());
+        intent.putExtra(EXTRA_DATA_ID, timeEntry.getId());
+        startActivityForResult(intent, UPDATE_TIMEENTRY_ACTIVITY_REQUEST_CODE);
     }
 
     @Override
@@ -65,13 +144,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.clear_data) {
+            // Add a toast just for confirmation
+            Toast.makeText(this, "Alle Zeiteinträge werden gelöscht...",
+                    Toast.LENGTH_SHORT).show();
+
+            // Delete the existing data
+            timeEntryViewModel.deleteAll();
             return true;
         }
 

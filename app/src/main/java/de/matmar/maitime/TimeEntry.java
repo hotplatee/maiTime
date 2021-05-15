@@ -1,5 +1,8 @@
 package de.matmar.maitime;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -8,7 +11,7 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
 @Entity(tableName = "timeentry_table")
-public class TimeEntry implements Serializable {
+public class TimeEntry implements Parcelable, Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -46,6 +49,40 @@ public class TimeEntry implements Serializable {
         this.minuten = entry.getMinuten();
         this.beschreibung = entry.getBeschreibung();
     }
+
+    protected TimeEntry(Parcel in) {
+        id = in.readInt();
+        datum = in.readString();
+        stunden = in.readString();
+        minuten = in.readString();
+        beschreibung = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(datum);
+        dest.writeString(stunden);
+        dest.writeString(minuten);
+        dest.writeString(beschreibung);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<TimeEntry> CREATOR = new Creator<TimeEntry>() {
+        @Override
+        public TimeEntry createFromParcel(Parcel in) {
+            return new TimeEntry(in);
+        }
+
+        @Override
+        public TimeEntry[] newArray(int size) {
+            return new TimeEntry[size];
+        }
+    };
 
     public String getDatum() {
         return datum;

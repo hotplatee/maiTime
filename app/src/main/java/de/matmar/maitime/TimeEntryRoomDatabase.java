@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.sql.Time;
 
-@Database(entities = {TimeEntry.class}, version = 1, exportSchema = false)
+@Database(entities = {TimeEntry.class}, version = 2, exportSchema = false)
 public abstract class TimeEntryRoomDatabase extends RoomDatabase {
 
     public abstract TimeEntryDao timeEntryDao();
@@ -55,8 +55,8 @@ public abstract class TimeEntryRoomDatabase extends RoomDatabase {
         private final TimeEntryDao timeEntryDao;
         TimeEntry entry1 = new TimeEntry("24.04.2021", "7", "30", "Sprintwechsel");
         TimeEntry entry2 = new TimeEntry("26.04.2021", "8", "30", "US#54321");
-        TimeEntry [] timeEntries = {entry1, entry2};
-                //"24.04.2021 8:30 Sprintwechsel", "25.04.2021 8:30 US#54321");
+        TimeEntry[] timeEntries = {entry1, entry2};
+        //"24.04.2021 8:30 Sprintwechsel", "25.04.2021 8:30 US#54321");
 
         PopulateDbAsync(TimeEntryRoomDatabase db) {
             timeEntryDao = db.timeEntryDao();
@@ -64,14 +64,12 @@ public abstract class TimeEntryRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(final Void... params) {
-            // Start the app with a clean database every time.
-            // Not needed if you only populate the database
-            // when it is first created
-            timeEntryDao.deleteAll();
 
-            for (int i = 0; i <= timeEntries.length -1; i++) {
-                TimeEntry timeEntry = new TimeEntry(timeEntries[i]);
-                timeEntryDao.insert(timeEntry);
+            if (timeEntryDao.getAnyTimeEntry().length < 1) {
+                for (int i = 0; i <= timeEntries.length - 1; i++) {
+                    TimeEntry timeEntry = new TimeEntry(timeEntries[i]);
+                    timeEntryDao.insert(timeEntry);
+                }
             }
             return null;
         }

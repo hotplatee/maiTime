@@ -27,6 +27,18 @@ public class TimeEntryRepository {
         new insertAsyncTask(timeEntryDao).execute(timeEntry);
     }
 
+    public void deleteAll(){
+        new deleteAllTimeEntriesAsyncTask(timeEntryDao).execute();
+    }
+
+    public void deleteTimeEntry(TimeEntry timeEntry)  {
+        new deleteTimeEntryAsyncTask(timeEntryDao).execute(timeEntry);
+    }
+
+    public void update(TimeEntry timeEntry)  {
+        new updateTimeEntryAsyncTask(timeEntryDao).execute(timeEntry);
+    }
+
     private static class insertAsyncTask extends    AsyncTask<TimeEntry, Void, Void> {
 
         private TimeEntryDao mAsyncTaskDao;
@@ -41,4 +53,48 @@ public class TimeEntryRepository {
             return null;
         }
     }
+
+    private static class deleteAllTimeEntriesAsyncTask extends AsyncTask<Void, Void, Void> {
+        private TimeEntryDao mAsyncTaskDao;
+
+        deleteAllTimeEntriesAsyncTask(TimeEntryDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mAsyncTaskDao.deleteAll();
+            return null;
+        }
+    }
+
+    private static class deleteTimeEntryAsyncTask extends AsyncTask<TimeEntry, Void, Void> {
+        private TimeEntryDao mAsyncTaskDao;
+
+        deleteTimeEntryAsyncTask(TimeEntryDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final TimeEntry... params) {
+            mAsyncTaskDao.deleteTimeEntry(params[0]);
+            return null;
+        }
+    }
+
+    private static class updateTimeEntryAsyncTask extends AsyncTask<TimeEntry, Void, Void> {
+        private TimeEntryDao mAsyncTaskDao;
+
+        updateTimeEntryAsyncTask(TimeEntryDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final TimeEntry... params) {
+            mAsyncTaskDao.update(params[0]);
+            return null;
+        }
+    }
+
+
 }

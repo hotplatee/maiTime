@@ -25,4 +25,13 @@ public class TimeEntryViewModel extends AndroidViewModel {
     public void insert(TimeEntry timeEntry) { timeEntryRepository.insert(timeEntry); }
 
 
+    public void deleteAll () {
+        timeEntryRepository.deleteAll();
+    }
+
+    public void deleteTimeEntry(TimeEntry timeEntry) {
+        timeEntryRepository.deleteTimeEntry(timeEntry);
+    }
+
+    public void update(TimeEntry timeEntry) {timeEntryRepository.update(timeEntry);}
 }

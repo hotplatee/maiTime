@@ -14,6 +14,8 @@ public class TimeEntryListAdapter extends RecyclerView.Adapter<TimeEntryListAdap
     private final LayoutInflater mInflater;
     private List<TimeEntry> timeEntryList; // Cached copy of timeEntry
 
+    private static ClickListener clickListener;
+
     TimeEntryListAdapter(Context context) { mInflater = LayoutInflater.from(context); }
 
     @Override
@@ -53,6 +55,23 @@ public class TimeEntryListAdapter extends RecyclerView.Adapter<TimeEntryListAdap
         private TimeEntryViewHolder(View itemView) {
             super(itemView);
             timeEntryItemView = itemView.findViewById(R.id.textView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onItemClick(view, getAdapterPosition());
+                }
+            });
         }
+    }
+
+    public TimeEntry getTimeEntryAtPosition (int position) {
+        return timeEntryList.get(position);
+    }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        TimeEntryListAdapter.clickListener = clickListener;
+    }
+    public interface ClickListener {
+        void onItemClick(View v, int position);
     }
 }
