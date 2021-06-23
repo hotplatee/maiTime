@@ -25,7 +25,7 @@ public class TimeEntry implements Parcelable, Serializable {
     @NonNull
     private String beschreibung;
 
-
+    @Ignore
     public TimeEntry(@NonNull String datum, @NonNull String stunden,
                      @NonNull String minuten, @NonNull String beschreibung) {
         this.datum = datum;
@@ -33,7 +33,7 @@ public class TimeEntry implements Parcelable, Serializable {
         this.minuten = minuten;
         this.beschreibung = beschreibung;
     }
-    @Ignore
+
     public TimeEntry(int id, @NonNull String datum, @NonNull String stunden,
                      @NonNull String minuten, @NonNull String beschreibung) {
         this.id = id;
@@ -84,6 +84,7 @@ public class TimeEntry implements Parcelable, Serializable {
         }
     };
 
+
     public String getDatum() {
         return datum;
     }
@@ -110,5 +111,10 @@ public class TimeEntry implements Parcelable, Serializable {
 
     public String getTimeEntry(){
      return this.datum + " " + this.stunden +":" + this.minuten + "  " + this.beschreibung;
+    }
+
+    public TimeEntry getTimeEntryObject(){
+        return new TimeEntry(this.id, this.datum, this.stunden, this.minuten, this.beschreibung);
+     //return this.datum + " " + this.stunden +":" + this.minuten + "  " + this.beschreibung;
     }
 }

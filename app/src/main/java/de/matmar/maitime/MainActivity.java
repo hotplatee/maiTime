@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.View;
 
 import android.view.Menu;
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchUpdateTimeEntrydActivity(TimeEntry timeEntry) {
         Intent intent = new Intent(this, NewTimeEntryActivity.class);
-        intent.putExtra(EXTRA_DATA_UPDATE_TIMEENTRY, timeEntry.getTimeEntry());
+        intent.putExtra(EXTRA_DATA_UPDATE_TIMEENTRY, (Parcelable) timeEntry.getTimeEntryObject());
         intent.putExtra(EXTRA_DATA_ID, timeEntry.getId());
         startActivityForResult(intent, UPDATE_TIMEENTRY_ACTIVITY_REQUEST_CODE);
     }
