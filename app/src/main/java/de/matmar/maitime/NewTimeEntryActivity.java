@@ -1,6 +1,7 @@
 package de.matmar.maitime;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import static de.matmar.maitime.MainActivity.EXTRA_DATA_ID;
 import static de.matmar.maitime.MainActivity.EXTRA_DATA_UPDATE_TIMEENTRY;
@@ -32,6 +34,8 @@ public class NewTimeEntryActivity extends AppCompatActivity {
         editorViewStunden = findViewById(R.id.edit_stunden);
         editorViewMinuten = findViewById(R.id.edit_minuten);
         editorViewBeschreibung = findViewById(R.id.edit_beschreibung);
+
+
         int id = -1 ;
 
         final Bundle extras = getIntent().getExtras();
@@ -77,4 +81,37 @@ public class NewTimeEntryActivity extends AppCompatActivity {
             }
         });
     }
+    public void showDatePicker(View view) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(),getString(R.string.datepicker));
+    }
+
+    public void showTimePicker(View view) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(),getString(R.string.timepicker));
+    }
+    public void processDatePickerResult(int year, int month, int day) {
+        String month_string = Integer.toString(month+1);
+        String day_string = Integer.toString(day);
+        String year_string = Integer.toString(year);
+        String dateMessage = (day_string +
+                "." + month_string + "." + year_string);
+
+        editorViewDatum.setText(dateMessage);
+    }
+
+    public void processTimePickerResult(int hourOfDay, int minute) {
+        String hour_string = Integer.toString(hourOfDay);
+        String minute_string = Integer.toString(minute);
+
+        String hourMessage = (hour_string);
+        String minuteMessage = (minute_string);
+
+        editorViewStunden.setText(hourMessage);
+        editorViewMinuten.setText(minuteMessage);
+    }
+
+
+
 }
+

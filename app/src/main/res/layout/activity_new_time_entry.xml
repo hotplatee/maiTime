@@ -10,17 +10,21 @@
         android:id="@+id/edit_datum"
         style="@style/text_view_style"
         android:hint="@string/hint_datum"
-        android:inputType="textAutoComplete" />
+        android:inputType="date"
+        android:onClick="showDatePicker" />
+
     <EditText
         android:id="@+id/edit_stunden"
         style="@style/text_view_style"
         android:hint="@string/hint_stunden"
-        android:inputType="textAutoComplete" />
+        android:inputType="number"
+        android:onClick="showTimePicker"/>
     <EditText
         android:id="@+id/edit_minuten"
         style="@style/text_view_style"
         android:hint="@string/hint_minuten"
-        android:inputType="textAutoComplete" />
+        android:inputType="number"
+        android:onClick="showTimePicker"/>
     <EditText
         android:id="@+id/edit_beschreibung"
         style="@style/text_view_style"
@@ -30,5 +34,8 @@
     <Button
         android:id="@+id/button_save"
         style="@style/button_style"
+        android:layout_height="wrap_content"
         android:text="@string/button_save" />
+
+
 </LinearLayout>
